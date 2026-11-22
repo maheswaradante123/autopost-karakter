@@ -1,0 +1,37 @@
+name: Autopost Reels
+
+on:
+  schedule:
+    - cron: "5 1 * * *"   # 08:05 WIB
+    - cron: "5 5 * * *"   # 12:05 WIB
+  workflow_dispatch:      # tombol "Run workflow" untuk jalan manual
+
+permissions:
+  contents: write
+
+concurrency:
+  group: autopost
+  cancel-in-progress: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Posting video yang jadwalnya sudah tiba
+        env:
+          TOKEN_RUNI: ${{ secrets.TOKEN_RUNI }}
+          TOKEN_THEO: ${{ secrets.TOKEN_THEO }}
+          TOKEN_IMANI: ${{ secrets.TOKEN_IMANI }}
+        run: python autopost.py
+      - name: Simpan catatan posting
+        if: always()
+        run: |
+          git config user.name "autopost-bot"
+          git config user.email "autopost-bot@users.noreply.github.com"
+          git add posted.txt
+          git diff --cached --quiet || (git commit -m "posted $(date -u +%F)" && git push)
