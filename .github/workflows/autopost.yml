@@ -5,6 +5,10 @@ on:
     - cron: "5 1 * * *"   # 08:05 WIB
     - cron: "5 5 * * *"   # 12:05 WIB
   workflow_dispatch:      # tombol "Run workflow" untuk jalan manual
+    inputs:
+      mode:
+        description: "post = posting yang jatuh tempo, check = cek token saja"
+        default: post
 
 permissions:
   contents: write
@@ -27,6 +31,7 @@ jobs:
           TOKEN_RUNI: ${{ secrets.TOKEN_RUNI }}
           TOKEN_THEO: ${{ secrets.TOKEN_THEO }}
           TOKEN_IMANI: ${{ secrets.TOKEN_IMANI }}
+          MODE: ${{ inputs.mode }}
         run: python autopost.py
       - name: Simpan catatan posting
         if: always()

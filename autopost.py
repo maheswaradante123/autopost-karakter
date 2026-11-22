@@ -61,7 +61,25 @@ def post_fb(tok, pid, path, cap):
     return s["video_id"]
 
 
+def check():
+    ok = True
+    for ch in ("RUNI", "THEO", "IMANI"):
+        tok = os.environ.get(f"TOKEN_{ch}", "").strip()
+        try:
+            pid, ig, name = account(tok)
+            d = http("GET", f"{G}/debug_token", {"input_token": tok, "access_token": tok})["data"]
+            exp = d.get("expires_at", 0)
+            log(f"{ch}: Page '{name}' | IG id {ig or 'TIDAK ADA'} | kedaluwarsa: {'tidak pernah' if not exp else datetime.datetime.fromtimestamp(exp, WIB)}")
+            ok = ok and bool(ig)
+        except Exception as e:
+            ok = False
+            log(f"{ch}: GAGAL {e}")
+    sys.exit(0 if ok else 1)
+
+
 def main():
+    if os.environ.get("MODE") == "check":
+        return check()
     dry = "--test" in sys.argv
     now = datetime.datetime.now(WIB)
     done = set(open(DONE).read().split()) if os.path.exists(DONE) else set()
