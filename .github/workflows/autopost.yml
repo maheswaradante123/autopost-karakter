@@ -3,7 +3,10 @@ name: Autopost Reels
 on:
   schedule:
     - cron: "5 1 * * *"   # 08:05 WIB
+    - cron: "40 1 * * *"  # 08:40 WIB (cadangan kalau GitHub telat)
+    - cron: "20 2 * * *"  # 09:20 WIB (cadangan)
     - cron: "5 5 * * *"   # 12:05 WIB
+    - cron: "40 5 * * *"  # 12:40 WIB (cadangan)
   workflow_dispatch:      # tombol "Run workflow" untuk jalan manual
     inputs:
       mode:
