@@ -120,8 +120,12 @@ def main():
                 done.add(key)
                 log(f"OK {key} -> {rid}")
             except Exception as e:
-                failed = True
-                log(f"GAGAL {key}: {e}")
+                if '"code":368' in str(e):
+                    # Facebook membatasi sementara (anti-spam): jangan dianggap error, dicoba lagi di run berikutnya (maks 48 jam)
+                    log(f"TUNDA {key}: dibatasi sementara oleh Facebook, dicoba lagi nanti")
+                else:
+                    failed = True
+                    log(f"GAGAL {key}: {e}")
     if failed:
         sys.exit(1)  # supaya GitHub mengirim email notifikasi gagal
 
